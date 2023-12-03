@@ -1,22 +1,53 @@
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>navigator对象</title>
+</head>
 <body>
+<button onclick="checkFlash()">检测是否有flash插件</button>
+<p id="text">这种方法可以通过撞库（就是猜）的方式大概得知你的浏览器安装了什么第三方插件，如果安装的插件很小众或者开发者的插件标识字典中没有你用的插件，那么他就检测不到</p>
+
+
 <script>
-//转自：https://blog.jianchihu.net/browser-get-plugins-info.html
-var pluginsLength = navigator.plugins.length;
-document.body.innerHTML = pluginsLength + " Plugin(s)<br>"
-+ '<table id="pluginTable"><thead>'
-+'<tr><th>Name</th><th>Filename</th><th>description</th><th>version</th></tr>'
-+'</thead><tbody></tbody></table>';
-var table = document.getElementById('pluginTable');
-for(var i = 0; i < pluginsLength; i++) {
-let newRow = table.insertRow();
-newRow.insertCell().textContent = navigator.plugins[i].name;
-newRow.insertCell().textContent = navigator.plugins[i].filename;
-newRow.insertCell().textContent = navigator.plugins[i].description;
-newRow.insertCell().textContent = navigator.plugins[i].version?navigator.plugins[i].version:"";
-}
+    <!--检测非IE插件-->
+    //name是插件名称
+    function hasPlugin(name) {
+        name=name.toLowerCase();
+        for(var i=0;i<navigator.plugins.length;i++){
+            if(navigator.plugins[i].name.toLowerCase().indexOf(name)>-1){
+                return true;
+            }
+        }
+        return false;
+    }
+    //检测IE插件name为插件的标识符
+    function hasIEPlugin(name) {
+        try{
+            new ActiveXObject(name);
+            return true;
+        }catch (ex){
+            return false;
+        }
+    }
+    //例如加测是否有flash插件
+    function hasFlash() {
+        var result = hasPlugin("Flash");
+        if(!result){
+            result = hasIEPlugin("ShockwaveFlash.ShockwaveFlash");
+        }
+
+        return result;
+    }
+    function checkFlash() {
+       var result =  hasFlash();
+       if(result){
+           alert("安装Flash插件");
+       }else{
+           alert("没有安装Flash插件");
+       }
+    }
+
 </script>
-<p id="text">上面就是检测结果了</p>
 </body>
 </html>
