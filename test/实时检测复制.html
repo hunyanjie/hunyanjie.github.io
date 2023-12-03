@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时检测复制</title>
+</head>
+<body>
+    <p id="text">这是一段需要检测的文字。</p>
+    <p id="detectedTimes"></p>
+	<p id="text">复制上面文字以进行试验，其实就是检测复制和剪切事件</p>
+
+    <script>
+        let text = document.getElementById('text');
+        let detectedTimes = document.getElementById('detectedTimes');
+        let count = 0;
+
+        text.addEventListener('copy', function() {
+            count++;
+            if (count > 0) {
+                detectedTimes.innerHTML = '检测到的次数：' + count;
+            }
+        });
+
+        text.addEventListener('cut', function() {
+            count++;
+            if (count > 0) {
+                detectedTimes.innerHTML = '检测到的次数：' + count;
+            }
+        });
+    </script>
+</body>
+</html>

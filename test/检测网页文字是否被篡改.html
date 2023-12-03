@@ -1,0 +1,23 @@
+<p id="text">This is some English text.</p>
+<p id="detectedTimes"></p>
+<p id="text">检测网页文字是否被翻译篡改，可以使用浏览器自带翻译进行测试</p>
+
+<script>
+let originalText = document.getElementById("text").innerText;
+let count = 0;
+let detectedTimesElement = document.getElementById("detectedTimes");
+
+function checkTampered() {
+    let currentText = document.getElementById("text").innerText;
+    if (currentText !== originalText) {
+        count++;
+        originalText = currentText;
+        detectedTimesElement.innerHTML = "检测到的次数：" + count;
+    }
+}
+
+let observer = new MutationObserver(checkTampered);
+observer.observe(document.getElementById("text"), { childList: true, subtree: true });
+
+setInterval(checkTampered, 1000);
+</script>
