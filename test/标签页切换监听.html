@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>   
+    <meta http-equiv="x-ua-compatible" content="ie=edge" charset="UTF-8">
+    <title>TestPage</title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>   
+</head>
+<body>
+    <div>       
+        <input type="button" id="btn1" value="取消监听visibilitychange">
+    </div>
+</body>
+</html>
+<script>
+    /*当关闭浏览器时，执行顺序onbeforeunload-->visibilitychange-->onunload*/
+    //window对象上的onload事件在所有文件包括样式表，图片和其他资源下载完毕后触发
+    window.onload = () => {
+        console.log('window对象上的onload事件在所有文件包括样式表，图片和其他资源下载完毕后触发');
+    };
+ 
+    //即将离开页面（刷新或关闭）时触发
+    window.onbeforeunload = () => {
+        console.log('1111关闭前事件');
+        debugger
+    }
+    //用户离开页面
+    window.onunload = () => {
+        console.log('2222onunload-用户离开页面');
+        debugger
+        //setTimeout(() => { window.close() }, 10000);//单位毫秒 
+    };
+    //监听当前窗口是否是活动窗口
+    if (document.hidden !== undefined) {
+        $(document).on('visibilitychange', () => {
+            var isHidden = document.hidden;
+            if (isHidden) {
+                //失去焦点
+                document.title = '小主，快回来';
+                console.log('visibilitychange--lost');
+            } else {
+                //未失去焦点
+                document.title = '激活窗户';
+                console.log('visibilitychange--com');
+            }
+        });
+    }
+    //取消visibilitychange
+    $('#btn1').click(() => {
+        console.log('取消visibilitychange');
+        $(document).off('visibilitychange');
+    });
+</script>
