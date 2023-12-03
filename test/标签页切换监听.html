@@ -1,53 +1,48 @@
-<!doctype html>
-<html lang="en">
-<head>   
-    <meta http-equiv="x-ua-compatible" content="ie=edge" charset="UTF-8">
-    <title>TestPage</title>
-    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
-    </script>   
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Feedback</title>
+    <style>
+        #log-container {
+            width: 100%;
+			height: 100%;
+            //height: 200px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div>       
-        <input type="button" id="btn1" value="取消监听visibilitychange">
-    </div>
-</body>
-</html>
-<script>
-    /*当关闭浏览器时，执行顺序onbeforeunload-->visibilitychange-->onunload*/
-    //window对象上的onload事件在所有文件包括样式表，图片和其他资源下载完毕后触发
-    window.onload = () => {
-        console.log('window对象上的onload事件在所有文件包括样式表，图片和其他资源下载完毕后触发');
-    };
- 
-    //即将离开页面（刷新或关闭）时触发
-    window.onbeforeunload = () => {
-        console.log('1111关闭前事件');
-        debugger
-    }
-    //用户离开页面
-    window.onunload = () => {
-        console.log('2222onunload-用户离开页面');
-        debugger
-        //setTimeout(() => { window.close() }, 10000);//单位毫秒 
-    };
-    //监听当前窗口是否是活动窗口
-    if (document.hidden !== undefined) {
-        $(document).on('visibilitychange', () => {
-            var isHidden = document.hidden;
-            if (isHidden) {
-                //失去焦点
-                document.title = '小主，快回来';
-                console.log('visibilitychange--lost');
+    <div id="log-container"></div>
+
+    <script>
+        document.addEventListener('visibilitychange', () => {
+            const state = document.visibilityState;
+            console.log(state); // hidden 表示当前页面切换为隐藏状态，visible表示当前页面切换为浏览状态
+            // 将日志信息输出到网页上的指定元素中
+            if (state === 'hidden') {
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML += '离开本页面 Visibility change:hidden<br>';
             } else {
-                //未失去焦点
-                document.title = '激活窗户';
-                console.log('visibilitychange--com');
+                const logContainer = document.getElementById('log-container');
+                logContainer.innerHTML += '切换回本页面 Visibility change:visible<br>';
             }
         });
-    }
-    //取消visibilitychange
-    $('#btn1').click(() => {
-        console.log('取消visibilitychange');
-        $(document).off('visibilitychange');
-    });
-</script>
+
+        window.addEventListener('focus', (e) => {
+            console.log('focus');
+            // 将日志信息输出到网页上的指定元素中
+            const logContainer = document.getElementById('log-container');
+            logContainer.innerHTML += '焦点在页面窗口 Window gained focus<br>';
+        });
+
+        window.addEventListener('blur', (e) => {
+            console.log('blur');
+            // 将日志信息输出到网页上的指定元素中
+            const logContainer = document.getElementById('log-container');
+            logContainer.innerHTML += '页面窗口失去焦点 Window lost focus<br>';
+        });
+    </script>
+</body>
+</html>
