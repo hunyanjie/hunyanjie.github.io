@@ -1,7 +1,7 @@
 name: Pull update.txt from You-Get-Gui
 on:
   schedule:
-    - cron: '*/1 * * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   pull_update_txt:
