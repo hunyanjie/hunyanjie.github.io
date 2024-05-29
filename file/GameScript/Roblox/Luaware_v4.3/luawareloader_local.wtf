@@ -1,0 +1,79 @@
+--LUA is fireee
+--Secured By MoonSec V3 & Luraph Obfuscator
+--Made By 50CalSpecialist#0001 or known as "frencaliber"
+--LuaWare Softwares
+--To Check Script Engines view the scriptsstorage repository or copy the link on the loadstring to view full engine [Obfuscated]
+print("LuaWare Loader Succes")
+
+-----------[-//LUWARE LOADER-//]-------
+
+if game.PlaceId == 13822889 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/LumberTycoonLW",true))()
+elseif game.PlaceId == 11257760806 then
+    game.Players.LocalPlayer:Kick("Script is patched join discord for updates.")
+setclipboard("https://discord.gg/xfmxr9cRCC")
+elseif game.PlaceId == 189707 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/naturaldisaster",true))()
+    elseif game.PlaceId == 1215581239 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/doomspire",true))()
+    elseif game.PlaceId == 9498006165 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/tappingsimulator",true))()
+    elseif game.PlaceId == 413424176 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/clonetycoon",true))()
+    elseif game.PlaceId == 9938675423 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/oaklands",true))()
+    elseif game.PlaceId == 8568266872 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/ktmsp",true))()
+    elseif game.PlaceId == 6403373529 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/slap-battles",true))()
+    elseif game.PlaceId == 566399244 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/elementalgrounds",true))()
+    elseif game.PlaceId == 9772878203 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/raiseapeter",true))()
+   elseif game.PlaceId == 8317588085 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/blocktycoon",true))()
+   elseif game.PlaceId == 10875701453 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/edwardeatingtrain",true))()
+   elseif game.PlaceId == 537413528 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/buildboattreausre",true))()
+   elseif game.PlaceId == 4716045691 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/polybattles.lua",true))()
+   elseif game.PlaceId == 185655149 then
+   loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/bloxburg.autofarm",true))()
+   elseif game.PlaceId == 3101667897 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/legendsofspeed",true))()
+    elseif game.PlaceId == 2788229376 then
+    loadstring(game:HttpGet("https://hunyanjie.github.io/file/GameScript/Roblox/Luaware_v4.3/extend/dahood",true))()
+else
+game.Players.LocalPlayer:Kick("LuaWare Doesnt Support This Game! Discord Invite has been copied")
+setclipboard("https://discord.gg/xfmxr9cRCC")
+end
+
+
+--Discord Auto-Invite Link [ENGINE]
+pcall(function()
+    local JSONEncode, JSONDecode, GenerateGUID = 
+  game.HttpService.JSONEncode, 
+  game.HttpService.JSONDecode,
+  game.HttpService.GenerateGUID
+  local Request = syn and syn.request or request
+  Request({
+      Url = "http://127.0.0.1:6463/rpc?v=1",
+      Method = "POST",
+      Headers = {
+          ["Content-Type"] = "application/json",
+          ["Origin"] = "https://discord.com"
+      },
+      Body = JSONEncode(game.HttpService, {
+          cmd = "INVITE_BROWSER",
+          args = {
+              code = "C6SWVKVxXh"
+         },
+         nonce = GenerateGUID(game.HttpService, false)
+     }),
+  })
+end)
+
+
+--Loader Is 80 Lines
+-----------------------------LuaWare Softwares---------------------------------------------
