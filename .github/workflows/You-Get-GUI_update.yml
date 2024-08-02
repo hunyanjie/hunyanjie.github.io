@@ -23,6 +23,10 @@ jobs:
       run: |
         cp You-Get-Gui/update.txt hunyanjie.github.io/file/project/You-Get-GUI/update.txt
 
+    - name: Copy bilibili-py-file-fix.txt.txt to hunyanjie.github.io/file/project/You-Get-GUI directory
+      run: |
+        cp You-Get-Gui/bilibili-py-file-fix.txt hunyanjie.github.io/file/project/You-Get-GUI/bilibili-py-file-fix.txt
+
     - name: Commit and push changes
       run: |
         cd hunyanjie.github.io
