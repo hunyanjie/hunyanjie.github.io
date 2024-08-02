@@ -1,0 +1,33 @@
+name: Pull bilibili-py-file-fix.txt from You-Get-Gui
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+
+jobs:
+  pull_update_txt:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout hunyanjie.github.io repository
+      uses: actions/checkout@v2
+      with:
+        path: hunyanjie.github.io
+
+    - name: Checkout You-Get-Gui repository
+      uses: actions/checkout@v2
+      with:
+        repository: hunyanjie/You-Get-Gui
+        path: You-Get-Gui
+
+    - name: Copy bilibili-py-file-fix.txt.txt to hunyanjie.github.io/file/project/You-Get-GUI directory
+      run: |
+        cp You-Get-Gui/bilibili-py-file-fix.txt hunyanjie.github.io/file/project/You-Get-GUI/bilibili-py-file-fix.txt
+
+    - name: Commit and push changes
+      run: |
+        cd hunyanjie.github.io
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add file/project/You-Get-GUI/update.txt
+        git commit -m "Update update.txt from You-Get-Gui"
+        git push
