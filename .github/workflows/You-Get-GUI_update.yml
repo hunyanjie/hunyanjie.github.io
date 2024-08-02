@@ -18,11 +18,7 @@ jobs:
       with:
         repository: hunyanjie/You-Get-Gui
         path: You-Get-Gui
-
-    - name: Copy bilibili-py-file-fix.txt.txt to hunyanjie.github.io/file/project/You-Get-GUI directory
-      run: |
-        cp You-Get-Gui/bilibili-py-file-fix.txt hunyanjie.github.io/file/project/You-Get-GUI/bilibili-py-file-fix.txt
-
+    
     - name: Copy update.txt to hunyanjie.github.io/file/project/You-Get-GUI directory
       run: |
         cp You-Get-Gui/update.txt hunyanjie.github.io/file/project/You-Get-GUI/update.txt
