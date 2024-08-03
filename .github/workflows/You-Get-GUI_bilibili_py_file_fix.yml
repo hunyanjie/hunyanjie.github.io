@@ -28,6 +28,6 @@ jobs:
         cd hunyanjie.github.io
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add file/project/You-Get-GUI/update.txt
-        git commit -m "Update update.txt from You-Get-Gui"
+        git add file/project/You-Get-GUI/bilibili-py-file-fix.txt
+        git commit -m "Pull bilibili-py-file-fix.txt from You-Get-Gui"
         git push
