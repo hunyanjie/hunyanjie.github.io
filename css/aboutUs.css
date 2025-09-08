@@ -7,6 +7,7 @@
     #cta-51 {
         padding: var(--sectionPadding);
         position: relative;
+        background-color: rgba(0, 0, 0, 0.8);  /* 设置为有透明度的纯色背景 */
     }
     #cta-51 .cs-container {
         width: 100%;
@@ -73,35 +74,5 @@
     }
     #cta-51 .cs-button-solid:hover:before {
         width: 100%;
-    }
-    #cta-51 .cs-picture {
-        height: 100%;
-        width: 100%;
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: -1;
-    }
-    #cta-51 .cs-picture:before {
-        /* black color overlay */
-        content: "";
-        position: absolute;
-        display: block;
-        height: 100%;
-        width: 100%;
-        background: #000;
-        opacity: 0.8;
-        top: 0;
-        left: 0;
-        z-index: 1;
-    }
-    #cta-51 .cs-picture img {
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
     }
 }
