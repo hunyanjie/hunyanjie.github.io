@@ -13,3 +13,7 @@
 .why-choose-us.show {
     top: 100px;
 }
+
+html {
+    scroll-behavior: smooth;
+}
