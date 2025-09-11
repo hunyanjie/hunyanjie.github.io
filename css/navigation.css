@@ -74,7 +74,7 @@
     }
     #cs-navigation .cs-logo {
         width: auto;
-        max-width: 6rem;
+        max-width: 12.5rem;
         height: 100%;
         margin: 0 auto 0 0;
         /* prevents padding from affecting height and width */
@@ -88,8 +88,6 @@
     #cs-navigation .cs-logo img {
         width: 100%;
         height: 100%;
-        filter: drop-shadow(0 0 1px black);
-        transition: filter 0.3s ease;
         /* ensures the image never overflows the container. It stays contained within it's width and height and expands to fill it then stops once it reaches an edge */
         object-fit: contain;
     }

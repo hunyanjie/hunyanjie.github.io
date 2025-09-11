@@ -11,8 +11,8 @@
     padding: 0 1.5rem;
     /* prevents padding and border from affecting height and width */
     box-sizing: border-box;
-    background-color: #fff;
-    border: 2px solid #1a1a1a;
+    background-color: var(--bodyTextColorWhite);
+    border: 2px solid var(--bodyTextColor);
     display: inline-flex;
     align-items: center;
     justify-content: space-between;
@@ -25,7 +25,7 @@
     content: "";
     width: 0.375rem;
     height: 100%;
-    background: #1a1a1a;
+    background: var(--bodyTextColor);
     opacity: 1;
     position: absolute;
     display: block;

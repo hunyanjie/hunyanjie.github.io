@@ -102,10 +102,13 @@
 }
 
 #myCarousel {
-    --f-carousel-gap: 10px;
-    --f-carousel-slide-width: 15%;
+    --f-carousel-gap: 20px;
+    --f-carousel-slide-width: 300px;
+    --f-carousel-slide-bg: #eee;
 }
 #myCarousel img {
+    height: 100%;
+    width: 100%;
     border-radius: 1rem;
     overflow: hidden;
     display: block;
