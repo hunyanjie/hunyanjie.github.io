@@ -104,7 +104,6 @@
 #myCarousel {
     --f-carousel-gap: 20px;
     --f-carousel-slide-width: 300px;
-    --f-carousel-slide-bg: #eee;
 }
 #myCarousel img {
     height: 100%;
