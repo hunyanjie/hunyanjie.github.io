@@ -91,9 +91,9 @@
         width: 100%;
     }
     #cta-51 .cs-button-solid.show {
-        animation: fade-in 1s ease-out forwards;
+        animation: fade-in 1.5s ease-out forwards;
     }
     #cta-51 .cs-button-solid.hide {
-        animation: fade-out 1s ease-out forwards;
+        animation: fade-out 1.5s ease-out forwards;
     }
 }
