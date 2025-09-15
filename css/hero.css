@@ -63,6 +63,8 @@
         margin: 0 0 2.5rem 0;
         color: #fff;
         position: relative;
+        transform: translateX(-100%);
+        animation: float-right-show 1.5s ease-out forwards;
     }
     #hero-1618 .cs-text {
         /* 16px - 20px */
@@ -88,6 +90,8 @@
         display: inline-block;
         position: relative;
         z-index: 1;
+        opacity: 0;
+        animation: fade-in 1.5s ease-out forwards;
     }
     #hero-1618 .cs-button-solid:before {
         content: '';
@@ -133,29 +137,58 @@
         justify-content: center;
         position: relative;
         z-index: 1;
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    #hero-1618 .cs-item.show {
+        animation: zoom-large-in 0.3s ease-out forwards;
+    }
+    #hero-1618 .cs-item.hide {
+        animation: zoom-large-out 0.3s ease-out forwards;
     }
     #hero-1618 .cs-icon {
         width: 3rem;
         height: auto;
         margin: 0 0 1.5rem 0;
+        opacity: 0;
+    }
+    #hero-1618 .cs-icon.show {
+        animation: fade-in 1s ease-out forwards;
+    }
+    #hero-1618 .cs-icon.hide {
+        animation: fade-out 1s ease-out forwards;
     }
     #hero-1618 .cs-h3 {
-        /* 20px - 25px */
         font-size: clamp(1.25rem, 2.5vw, 1.5625rem);
         line-height: 1.2em;
         font-weight: bold;
         text-align: inherit;
         margin: 0 0 1rem 0;
         color: var(--headerColor);
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    #hero-1618 .cs-h3.show {
+        animation: float-down-show 1s ease-out forwards;
+    }
+    #hero-1618 .cs-h3.hide {
+        animation: float-up-hide 1s ease-out forwards;
     }
     #hero-1618 .cs-item-text {
-        /* 14px - 16px */
         font-size: clamp(0.875rem, 1.5vw, 1rem);
         line-height: 1.5em;
         max-width: 28.125rem;
         margin: 0;
         padding: 0;
         color: var(--bodyTextColor);
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    #hero-1618 .cs-item-text.show {
+        animation: float-up-show 1s ease-out forwards;
+    }
+    #hero-1618 .cs-item-text.hide {
+        animation: float-down-hide 1s ease-out forwards;
     }
     #hero-1618 .cs-background {
         width: 100%;

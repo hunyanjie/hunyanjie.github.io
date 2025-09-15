@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             backToTopButton.classList.remove('show'); // 移除淡出动画
             backToTopButton.classList.add('hide');
             setTimeout(function() {
-                backToTopBtn.style.display = 'none'; // 完全隐藏按钮
+                backToTopButton.style.display = 'none'; // 完全隐藏按钮
             }, 500);
         }
     });

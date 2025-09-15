@@ -78,22 +78,25 @@
         color: var(--bodyTextColorWhite);
         position: relative;
     }
-    #cs-footer-269 .cs-nav-link:before {
-        /* underline */
-        content: "";
-        width: 0%;
-        height: 0.125rem;
-        /* current color of the parent */
-        background: currentColor;
-        opacity: 1;
-        position: absolute;
-        display: block;
-        bottom: -0.125rem;
-        left: 0;
-        transition: width 0.3s;
+    #cs-footer-269 .cs-nav-link:after {
+         /*内容和背景*/
+         content: "";
+         background: currentColor;
+         /*大小和位置*/
+         position: absolute;
+         width: 100%;
+         height: 0.125rem;
+         bottom: -0.125rem;
+         left: 0;
+         /*初始缩放为0，变换中心为右下角*/
+         transform: scaleX(0);
+         transform-origin: bottom right;
+         /*动画*/
+         transition: transform 0.3s ease-in-out;
     }
-    #cs-footer-269 .cs-nav-link:hover:before {
-        width: 100%;
+    #cs-footer-269 .cs-nav-link:hover:after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
     }
     #cs-footer-269 .cs-contact {
         margin: 0;

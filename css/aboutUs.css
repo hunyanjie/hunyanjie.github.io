@@ -31,11 +31,26 @@
 
     #cta-51 .cs-title {
         color: var(--bodyTextColorWhite);
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    #cta-51 .cs-title.show {
+        animation: float-up-show 1s ease-out forwards;
+    }
+    #cta-51 .cs-title.hide {
+        animation: float-down-hide 1s ease-out forwards;
     }
     #cta-51 .cs-text {
         margin-bottom: 1rem;
         color: var(--bodyTextColorWhite);
-        opacity: 0.8;
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    #cta-51 .cs-text.show {
+        animation: float-up-show 1s ease-out forwards;
+    }
+    #cta-51 .cs-text.hide {
+        animation: float-down-hide 1s ease-out forwards;
     }
     #cta-51 .cs-text:last-of-type {
         margin-bottom: 2rem;
@@ -74,5 +89,11 @@
     }
     #cta-51 .cs-button-solid:hover:before {
         width: 100%;
+    }
+    #cta-51 .cs-button-solid.show {
+        animation: fade-in 1s ease-out forwards;
+    }
+    #cta-51 .cs-button-solid.hide {
+        animation: fade-out 1s ease-out forwards;
     }
 }
