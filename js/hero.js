@@ -20,7 +20,7 @@ window.addEventListener('scroll', function() {
     const headings = document.getElementsByClassName('cs-h3');
     const texts = document.getElementsByClassName('cs-item-text');
 
-    if (window.scrollY <= triggerPoint) {
+    if (window.scrollY <= triggerPoint + 60) {
         for (let i = 0; i < item.length; i++) {
             item[i].classList.remove('show');
             item[i].classList.add('hide');
@@ -37,8 +37,7 @@ window.addEventListener('scroll', function() {
             texts[i].classList.remove('show');
             texts[i].classList.add('hide');
         }
-    }
-    if (window.scrollY > triggerPoint) {
+    } else {
         for (let i = 0; i < item.length; i++) {
             item[i].classList.add('show');
             item[i].classList.remove('hide');
