@@ -33,9 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 点击按钮时平滑滚动到顶部
     backToTopButton.addEventListener('click', () => {
         backToTopButton.classList.add('active');
-        window.scrollTo({
-            top: 0
-        });
+        lenis.scrollTo(0);
         setTimeout(function() {
             backToTopButton.classList.remove('active');
         }, 300);
