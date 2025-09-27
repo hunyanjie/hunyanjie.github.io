@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PNG 图标换色</title>
+    <style>
+        body{
+            margin:0;
+            background:#f7f7f7;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            font-family:Segoe UI,Helvetica,Arial,sans-serif;
+        }
+        .wrap{
+            display:flex;
+            gap:40px;
+            background:#fff;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);
+        }
+        .left{
+            text-align:center;
+        }
+        .left img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            /* 滤镜叠加：先强化对比度，再替换颜色，尝试解决偏浅问题 */
+            filter: contrast(200%) brightness(0) saturate(200%) var(--color-filter);
+            transition: filter .3s;
+        }
+        .right h3{margin-top:0;font-size:18px;}
+        .palette{
+            display:grid;
+            grid-template-columns:repeat(6,32px);
+            gap:10px;
+            margin-bottom:20px;
+        }
+        .swatch{
+            width:32px;
+            height:32px;
+            border-radius:6px;
+            cursor:pointer;
+            box-shadow:0 0 0 1px rgba(0,0,0,.1);
+            transition:transform .15s;
+        }
+        .swatch:hover{transform:scale(1.15);}
+
+        /* 自定义颜色输入区域样式 */
+        .custom-color {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #eee;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        #colorInput {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        #colorPicker {
+            width: 40px;
+            height: 34px;
+            padding: 2px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+        #colorPicker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        #colorPicker::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        #applyCustom {
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #applyCustom:hover {
+            background: #2980b9;
+        }
+        .error-tip {
+            margin: 8px 0 0;
+            font-size: 12px;
+            color: #e74c3c; /* 错误提示红色 */
+            height: 16px; /* 保持占位，避免抖动 */
+        }
+        .format-hint {
+            margin: 5px 0 0;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="left">
+        <img id="icon" src="./1.png" alt="icon">
+        <p style="margin-top:12px;font-size:14px;color:#666;">点击颜色替换图标</p>
+    </div>
+
+    <div class="right">
+        <h3>预设颜色</h3>
+        <div class="palette" id="palette"></div>
+
+        <!-- 自定义颜色输入区域 -->
+        <div class="custom-color">
+            <h3>自定义颜色</h3>
+            <div class="input-group">
+                <input type="text" id="colorInput" placeholder="支持 #ff0000 或 rgb(255,0,0)">
+                <input type="color" id="colorPicker" value="#e74c3c">
+                <button id="applyCustom">应用</button>
+            </div>
+            <p class="error-tip" id="errorTip"></p>
+            <p class="format-hint">格式示例：#e74c3c 或 rgb(231,76,60)</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const colors = [
+        '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db',
+        '#9b59b6','#34495e','#95a5a6','#d35400','#f39c12','#27ae60',
+        '#FFFFFF','#474747','#000000','#E44C51','#EDB727','#46D697',
+        '#6488F0','#B568F6','#FAB8A9','#F9EEB2','#D2FDB6','#C0D1F9',
+        '#EEC0FF'
+    ];
+    const palette = document.getElementById('palette');
+    const icon = document.getElementById('icon');
+    const colorInput = document.getElementById('colorInput');
+    const colorPicker = document.getElementById('colorPicker');
+    const applyCustomBtn = document.getElementById('applyCustom');
+    const errorTip = document.getElementById('errorTip');
+
+    // 生成预设调色板
+    colors.forEach(c => {
+        const s = document.createElement('div');
+        s.className = 'swatch';
+        s.style.background = c;
+        s.addEventListener('click', () => applyColor(c));
+        palette.appendChild(s);
+    });
+
+    // 应用颜色（核心函数）
+    function applyColor(hex) {
+        const rgb = hexToRgb(hex);
+        const filter = calcFilter(rgb);
+        icon.style.setProperty('--color-filter', filter);
+        // 同步更新自定义颜色相关控件
+        colorPicker.value = hex;
+        colorInput.value = hex.toUpperCase();
+    }
+
+    // 十六进制转RGB
+    function hexToRgb(hex) {
+        const m = hex.match(/\w\w/g).map(x => parseInt(x, 16));
+        return { r: m[0], g: m[1], b: m[2] };
+    }
+
+    function calcFilter(rgb) {
+        const { r, g, b } = rgb;
+        // 将RGB值转为 0-1 范围（用于矩阵计算）
+        const rr = r / 255;
+        const gg = g / 255;
+        const bb = b / 255;
+
+        const matrix = [
+            0, 0, 0, 0, rr,   // 红色通道：只保留自定义红色
+            0, 0, 0, 0, gg,   // 绿色通道：只保留自定义绿色
+            0, 0, 0, 0, bb,   // 蓝色通道：只保留自定义蓝色
+            0, 0, 0, 1, 0     // Alpha通道：完全保留原图标透明度
+        ].join(' ');
+
+        // 生成SVG滤镜（直接用matrix替换颜色，不额外降低饱和度）
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg"><filter id="f"><feColorMatrix type="matrix" values="${matrix}" /></filter></svg>`;
+        return `url("data:image/svg+xml,${encodeURIComponent(svg)}#f")`;
+    }
+
+    // 解析用户输入的颜色（支持16进制和RGB）
+    function parseUserColor(input) {
+        input = input.trim();
+        // 16进制格式（支持带#和不带，6位）
+        const hexReg = /^#?([0-9a-fA-F]{6})$/;
+        const hexMatch = input.match(hexReg);
+        if (hexMatch) {
+            return `#${hexMatch[1].toLowerCase()}`; // 统一转为带#的小写格式
+        }
+
+        // RGB格式（rgb(r,g,b)，r/g/b为0-255的整数）
+        const rgbReg = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/;
+        const rgbMatch = input.match(rgbReg);
+        if (rgbMatch) {
+            const r = parseInt(rgbMatch[1], 10);
+            const g = parseInt(rgbMatch[2], 10);
+            const b = parseInt(rgbMatch[3], 10);
+            // 验证数值范围
+            if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                // 转换为16进制
+                const toHex = (num) => num.toString(16).padStart(2, '0');
+                return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase();
+            }
+        }
+
+        return null; // 无效格式
+    }
+
+    // 处理自定义颜色应用
+    function handleCustomColor() {
+        const inputVal = colorInput.value;
+        const validHex = parseUserColor(inputVal);
+
+        if (validHex) {
+            applyColor(validHex);
+            errorTip.textContent = ''; // 清空错误提示
+            colorPicker.value = validHex; // 同步颜色选择器
+        } else {
+            errorTip.textContent = '格式错误！请输入有效的16进制或RGB颜色';
+        }
+    }
+
+    // 颜色选择器变化时同步更新
+    colorPicker.addEventListener('input', function() {
+        const color = this.value;
+        applyColor(color);
+        colorInput.value = color.toUpperCase();
+        errorTip.textContent = '';
+    });
+
+    // 绑定事件
+    applyCustomBtn.addEventListener('click', handleCustomColor);
+    colorInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleCustomColor(); // 支持回车应用
+    });
+
+    // 初始化默认颜色
+    applyColor(colors[0]);
+</script>
+</body>
+</html>
