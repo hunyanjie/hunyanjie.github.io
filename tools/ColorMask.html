@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>PNG 颜色遮罩</title>
+    <style>
+        body{
+            margin:0;
+            background:#f7f7f7;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            font-family:Segoe UI,Helvetica,Arial,sans-serif;
+        }
+        .wrap{
+            display:flex;
+            gap:40px;
+            background:#fff;
+            padding:40px;
+            border-radius:12px;
+            box-shadow:0 8px 24px rgba(0,0,0,.08);
+        }
+        .left{
+            text-align:center;
+        }
+        .left img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            filter: contrast(100%) brightness(0) saturate(100%) var(--color-filter);
+            transition: filter .3s;
+        }
+        .right h3{margin-top:0;font-size:18px;}
+        .palette{
+            display:grid;
+            grid-template-columns:repeat(6,32px);
+            gap:10px;
+            margin-bottom:20px;
+        }
+        .swatch{
+            width:32px;
+            height:32px;
+            border-radius:6px;
+            cursor:pointer;
+            box-shadow:0 0 0 1px rgba(0,0,0,.1);
+            transition:transform .15s;
+        }
+        .swatch:hover{transform:scale(1.15);}
+
+        /* 自定义颜色输入区域样式 */
+        .custom-color {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #eee;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        #colorInput {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        #colorPicker {
+            width: 40px;
+            height: 34px;
+            padding: 2px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            background: transparent;
+        }
+        #colorPicker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        #colorPicker::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        #applyCustom, #applyUrlBtn, #fileBtn {
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        #applyCustom:hover, #applyUrlBtn:hover, #fileBtn:hover {
+            background: #2980b9;
+        }
+        .error-tip {
+            margin: 8px 0 0;
+            font-size: 12px;
+            color: #e74c3c; /* 错误提示红色 */
+            height: 16px; /* 保持占位，避免抖动 */
+        }
+        .format-hint {
+            margin: 5px 0 0;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 新增：图片替换区域样式 */
+        .image-replace {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #eee;
+        }
+        #imageUrlInput {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        #fileInput {
+            display: none; /* 隐藏原生文件选择框 */
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="left">
+        <img id="icon" src="https://g0.gph.netease.com/ngsocial/community/wjdlglr/res/background/1.png" alt="icon">
+        <p style="margin-top:12px;font-size:14px;color:#666;">点击颜色替换图标</p>
+    </div>
+
+    <div class="right">
+        <!-- 1. 标题替换：h3→div+大写样式（原需求） -->
+        <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">预设颜色</div>
+        <div class="palette" id="palette"></div>
+
+        <!-- 2. 自定义颜色输入区域 -->
+        <div class="custom-color">
+            <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">自定义颜色</div>
+            <div class="input-group">
+                <input type="text" id="colorInput" placeholder="支持 #ff0000 或 rgb(255,0,0)">
+                <input type="color" id="colorPicker" value="#e74c3c">
+                <button id="applyCustom">应用</button>
+            </div>
+            <p class="error-tip" id="errorTip"></p>
+            <p class="format-hint">格式示例：#e74c3c 或 rgb(231,76,60)</p>
+        </div>
+
+        <!-- 3. 新增：图片替换区域（选择文件+输入URL） -->
+        <div class="image-replace">
+            <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">替换图片</div>
+            <!-- 输入URL换图 -->
+            <div class="input-group" style="margin-top: 10px;">
+                <input type="text" id="imageUrlInput" placeholder="输入图片URL（如https://xxx.png）">
+                <button id="applyUrlBtn">应用URL</button>
+            </div>
+            <!-- 选择本地文件换图 -->
+            <div class="input-group" style="margin-top: 10px;">
+                <label for="fileInput" id="fileBtn" style="margin: 0; padding: 8px 16px; display: inline-block;">选择本地图片</label>
+                <input type="file" id="fileInput" accept="image/png,image/jpg,image/jpeg">
+                <p class="format-hint" style="margin-left: 10px;">支持 PNG/JPG/JPEG 格式</p>
+            </div>
+            <p class="error-tip" id="imageErrorTip"></p>
+        </div>
+    </div>
+</div>
+<script>
+    /* ---------- 工具函数 ---------- */
+    const colors = [
+        '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db',
+        '#9b59b6','#34495e','#95a5a6','#d35400','#f39c12','#27ae60',
+        '#A54245','#AB9344','#317C5E','#425EA5','#7042A5'
+    ];
+    const icon       = document.getElementById('icon');
+    const colorInput = document.getElementById('colorInput');
+    const colorPicker= document.getElementById('colorPicker');
+    const applyBtn   = document.getElementById('applyCustom');
+    const errorTip   = document.getElementById('errorTip');
+
+    let wrapBox, overlayDiv, depthRange;   // 容器、遮罩、滑杆
+
+    /* ---------- 只给图片加容器 + 遮罩 ---------- */
+    function ensureWrapper() {
+        if (wrapBox) return;
+        // 1. 创建 wrapBox（相对定位，仅包裹 img）
+        wrapBox = document.createElement('div');
+        Object.assign(wrapBox.style, {
+            position: 'relative',
+            display:  'inline-block',   // 大小完全跟随 img
+            width:    icon.width  + 'px',
+            height:   icon.height + 'px'
+        });
+        icon.parentNode.insertBefore(wrapBox, icon);
+        wrapBox.appendChild(icon);
+
+        // 2. 创建遮罩层
+        overlayDiv = document.createElement('div');
+        Object.assign(overlayDiv.style, {
+            position:      'absolute',
+            left:          0,
+            top:           0,
+            width:         '100%',
+            height:        '100%',
+            pointerEvents: 'none',
+            mixBlendMode:  'multiply',
+            opacity:       0.6,          // 默认 60%
+            background:    colors[0],
+            transition:    'opacity .25s, background .25s'
+        });
+        wrapBox.appendChild(overlayDiv);
+
+        // 3. 创建“遮罩深度”滑杆
+        const sliderBox = document.createElement('div');
+        sliderBox.innerHTML =
+            `<div style="margin-top:12px;font-size:13px;color:#666;">遮罩深度</div>`+
+            `<input type="range" id="depthRange" min="0" max="100" value="60" style="width:180px">`+
+            `<span id="depthVal" style="margin-left:8px;font-size:13px">60%</span>`;
+        document.querySelector('.left').appendChild(sliderBox);
+        depthRange = document.getElementById('depthRange');
+        depthRange.addEventListener('input', e => {
+            const v = e.target.value;
+            overlayDiv.style.opacity = v/100;
+            document.getElementById('depthVal').textContent = v+'%';
+        });
+    }
+
+    /* ---------- 应用颜色 ---------- */
+    function applyColor(hex) {
+        ensureWrapper();
+        overlayDiv.style.background = hex;
+        colorPicker.value = hex;
+        colorInput.value  = hex.toUpperCase();
+        errorTip.textContent = '';
+    }
+
+    /* ---------- 解析颜色 ---------- */
+    function parseUserColor(input) {
+        input = input.trim();
+        const hexMatch = input.match(/^#?([0-9a-fA-F]{6})$/);
+        if (hexMatch) return `#${hexMatch[1].toLowerCase()}`;
+        const rgbMatch = input.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/);
+        if (rgbMatch) {
+            const [r,g,b] = rgbMatch.slice(1).map(n => parseInt(n,10));
+            if ([r,g,b].every(v => v>=0 && v<=255))
+                return `#${((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)}`;
+        }
+        return null;
+    }
+    function handleCustomColor() {
+        const hex = parseUserColor(colorInput.value);
+        hex ? applyColor(hex) : (errorTip.textContent = '格式错误！');
+    }
+
+    /* ---------- 预设调色板 ---------- */
+    document.getElementById('palette').append(
+        ...colors.map(c => {
+            const s = document.createElement('div');
+            s.className = 'swatch';
+            s.style.background = c;
+            s.addEventListener('click', () => {
+                applyColor(c);
+                colorInput.value = c.toUpperCase();
+            });
+            return s;
+        })
+    );
+
+    /* ---------- 事件 ---------- */
+    colorPicker.addEventListener('input', e => applyColor(e.target.value));
+    applyBtn.addEventListener('click', handleCustomColor);
+    colorInput.addEventListener('keydown', e => e.key==='Enter' && handleCustomColor());
+
+    /* ---------- 初始化 ---------- */
+    applyColor(colors[0]);
+
+    /* ---------- 图片替换（保持原逻辑，未改动） ---------- */
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    const applyUrlBtn   = document.getElementById('applyUrlBtn');
+    const fileInput     = document.getElementById('fileInput');
+    const imageErrorTip = document.getElementById('imageErrorTip');
+    let   imageUrl      = 'https://g0.gph.netease.com/ngsocial/community/wjdlglr/res/background/1.png';
+
+    function handleUrlReplace() {
+        const url = imageUrlInput.value.trim();
+        if (!url) return imageErrorTip.textContent = '请输入图片URL';
+        const testImg = new Image();
+        testImg.onload = () => {
+            imageUrl = url;
+            icon.src = imageUrl;
+            imageErrorTip.textContent = '';
+            applyColor(colors[0]);
+            // 图片尺寸可能变化，重新校正容器大小
+            icon.onload = () => {
+                wrapBox.style.width  = icon.width  + 'px';
+                wrapBox.style.height = icon.height + 'px';
+            };
+        };
+        testImg.onerror = () => imageErrorTip.textContent = 'URL图片加载失败';
+        testImg.src = url;
+    }
+    function handleFileReplace(file) {
+        if (!file) return;
+        if (!['image/png','image/jpg','image/jpeg'].includes(file.type))
+            return imageErrorTip.textContent = '仅支持 PNG/JPG/JPEG';
+        const fileUrl = URL.createObjectURL(file);
+        imageUrl = fileUrl;
+        icon.src = imageUrl;
+        imageErrorTip.textContent = '';
+        applyColor(colors[0]);
+        icon.onload = () => {
+            wrapBox.style.width  = icon.width  + 'px';
+            wrapBox.style.height = icon.height + 'px';
+        };
+    }
+    applyUrlBtn.addEventListener('click', handleUrlReplace);
+    imageUrlInput.addEventListener('keydown', e => e.key==='Enter' && handleUrlReplace());
+    fileInput.addEventListener('change', e => handleFileReplace(e.target.files[0]));
+    icon.src = imageUrl;
+</script>
+</body>
+</html>
