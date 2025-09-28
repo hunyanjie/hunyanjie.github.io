@@ -28,8 +28,7 @@
             width: 200px;
             height: 200px;
             object-fit: contain;
-            /* 滤镜叠加：先强化对比度，再替换颜色，尝试解决偏浅问题 */
-            filter: contrast(200%) brightness(0) saturate(200%) var(--color-filter);
+            filter: contrast(100%) brightness(0) saturate(100%) var(--color-filter);
             transition: filter .3s;
         }
         .right h3{margin-top:0;font-size:18px;}
@@ -85,7 +84,7 @@
             border: none;
             border-radius: 4px;
         }
-        #applyCustom {
+        #applyCustom, #applyUrlBtn, #fileBtn {
             padding: 8px 16px;
             background: #3498db;
             color: white;
@@ -94,7 +93,7 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        #applyCustom:hover {
+        #applyCustom:hover, #applyUrlBtn:hover, #fileBtn:hover {
             background: #2980b9;
         }
         .error-tip {
@@ -108,22 +107,41 @@
             font-size: 12px;
             color: #999;
         }
+
+        /* 新增：图片替换区域样式 */
+        .image-replace {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #eee;
+        }
+        #imageUrlInput {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 120px;
+        }
+        #fileInput {
+            display: none; /* 隐藏原生文件选择框 */
+        }
     </style>
 </head>
 <body>
 <div class="wrap">
     <div class="left">
-        <img id="icon" src="https://g0.gph.netease.com/ngsocial/community/wjdlglr/res/figure/1.png" alt="icon">
+        <img id="icon" src="./1.png" alt="icon">
         <p style="margin-top:12px;font-size:14px;color:#666;">点击颜色替换图标</p>
     </div>
 
     <div class="right">
-        <h3>预设颜色</h3>
+        <!-- 1. 标题替换：h3→div+大写样式（原需求） -->
+        <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">预设颜色</div>
         <div class="palette" id="palette"></div>
 
-        <!-- 自定义颜色输入区域 -->
+        <!-- 2. 自定义颜色输入区域 -->
         <div class="custom-color">
-            <h3>自定义颜色</h3>
+            <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">自定义颜色</div>
             <div class="input-group">
                 <input type="text" id="colorInput" placeholder="支持 #ff0000 或 rgb(255,0,0)">
                 <input type="color" id="colorPicker" value="#e74c3c">
@@ -132,10 +150,28 @@
             <p class="error-tip" id="errorTip"></p>
             <p class="format-hint">格式示例：#e74c3c 或 rgb(231,76,60)</p>
         </div>
+
+        <!-- 3. 新增：图片替换区域（选择文件+输入URL） -->
+        <div class="image-replace">
+            <div style="margin-top: 0; font-size: 18px; font-weight: 700; text-transform: uppercase;">替换图片</div>
+            <!-- 输入URL换图 -->
+            <div class="input-group" style="margin-top: 10px;">
+                <input type="text" id="imageUrlInput" placeholder="输入图片URL（如https://xxx.png）">
+                <button id="applyUrlBtn">应用URL</button>
+            </div>
+            <!-- 选择本地文件换图 -->
+            <div class="input-group" style="margin-top: 10px;">
+                <label for="fileInput" id="fileBtn" style="margin: 0; padding: 8px 16px; display: inline-block;">选择本地图片</label>
+                <input type="file" id="fileInput" accept="image/png,image/jpg,image/jpeg">
+                <p class="format-hint" style="margin-left: 10px;">支持 PNG/JPG/JPEG 格式</p>
+            </div>
+            <p class="error-tip" id="imageErrorTip"></p>
+        </div>
     </div>
 </div>
 
 <script>
+    // --------------- 原有逻辑整合 + 新增换图逻辑 ---------------
     const colors = [
         '#e74c3c','#e67e22','#f1c40f','#2ecc71','#1abc9c','#3498db',
         '#9b59b6','#34495e','#95a5a6','#d35400','#f39c12','#27ae60',
@@ -143,114 +179,165 @@
         '#6488F0','#B568F6','#FAB8A9','#F9EEB2','#D2FDB6','#C0D1F9',
         '#EEC0FF'
     ];
+    // DOM元素缓存（新增图片相关元素）
     const palette = document.getElementById('palette');
     const icon = document.getElementById('icon');
     const colorInput = document.getElementById('colorInput');
     const colorPicker = document.getElementById('colorPicker');
     const applyCustomBtn = document.getElementById('applyCustom');
     const errorTip = document.getElementById('errorTip');
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    const applyUrlBtn = document.getElementById('applyUrlBtn');
+    const fileInput = document.getElementById('fileInput');
+    const imageErrorTip = document.getElementById('imageErrorTip');
+    // 初始图片路径（可修改为默认图）
+    let imageUrl = './1.png';
 
-    // 生成预设调色板
+    // 1. 生成预设调色板（优化：点击后直接用HEX，避免二次解析）
     colors.forEach(c => {
         const s = document.createElement('div');
         s.className = 'swatch';
         s.style.background = c;
-        s.addEventListener('click', () => applyColor(c));
+        s.addEventListener('click', () => {
+            applyColor(c);
+            colorInput.value = c.toUpperCase(); // 点击预设后文本框显示HEX（原需求）
+        });
         palette.appendChild(s);
     });
 
-    // 应用颜色（核心函数）
+    // 2. 应用颜色（核心函数，保持原逻辑）
     function applyColor(hex) {
         const rgb = hexToRgb(hex);
         const filter = calcFilter(rgb);
         icon.style.setProperty('--color-filter', filter);
-        // 同步更新自定义颜色相关控件
         colorPicker.value = hex;
         colorInput.value = hex.toUpperCase();
     }
 
-    // 十六进制转RGB
+    // 3. 十六进制转RGB（保持原逻辑）
     function hexToRgb(hex) {
         const m = hex.match(/\w\w/g).map(x => parseInt(x, 16));
         return { r: m[0], g: m[1], b: m[2] };
     }
 
+    // 4. 计算颜色滤镜（保持原优化逻辑）
     function calcFilter(rgb) {
         const { r, g, b } = rgb;
-        // 将RGB值转为 0-1 范围（用于矩阵计算）
         const rr = r / 255;
         const gg = g / 255;
         const bb = b / 255;
-
         const matrix = [
-            0, 0, 0, 0, rr,   // 红色通道：只保留自定义红色
-            0, 0, 0, 0, gg,   // 绿色通道：只保留自定义绿色
-            0, 0, 0, 0, bb,   // 蓝色通道：只保留自定义蓝色
-            0, 0, 0, 1, 0     // Alpha通道：完全保留原图标透明度
+            0, 0, 0, 0, rr,
+            0, 0, 0, 0, gg,
+            0, 0, 0, 0, bb,
+            0, 0, 0, 1, 0
         ].join(' ');
-
-        // 生成SVG滤镜（直接用matrix替换颜色，不额外降低饱和度）
         const svg = `<svg xmlns="http://www.w3.org/2000/svg"><filter id="f"><feColorMatrix type="matrix" values="${matrix}" /></filter></svg>`;
         return `url("data:image/svg+xml,${encodeURIComponent(svg)}#f")`;
     }
 
-    // 解析用户输入的颜色（支持16进制和RGB）
+    // 5. 解析用户输入颜色（保持原逻辑）
     function parseUserColor(input) {
         input = input.trim();
-        // 16进制格式（支持带#和不带，6位）
         const hexReg = /^#?([0-9a-fA-F]{6})$/;
         const hexMatch = input.match(hexReg);
         if (hexMatch) {
-            return `#${hexMatch[1].toLowerCase()}`; // 统一转为带#的小写格式
+            return `#${hexMatch[1].toLowerCase()}`;
         }
-
-        // RGB格式（rgb(r,g,b)，r/g/b为0-255的整数）
         const rgbReg = /^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/;
         const rgbMatch = input.match(rgbReg);
         if (rgbMatch) {
             const r = parseInt(rgbMatch[1], 10);
             const g = parseInt(rgbMatch[2], 10);
             const b = parseInt(rgbMatch[3], 10);
-            // 验证数值范围
             if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
-                // 转换为16进制
                 const toHex = (num) => num.toString(16).padStart(2, '0');
                 return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase();
             }
         }
-
-        return null; // 无效格式
+        return null;
     }
 
-    // 处理自定义颜色应用
+    // 6. 处理自定义颜色（保持原逻辑）
     function handleCustomColor() {
         const inputVal = colorInput.value;
         const validHex = parseUserColor(inputVal);
-
         if (validHex) {
             applyColor(validHex);
-            errorTip.textContent = ''; // 清空错误提示
-            colorPicker.value = validHex; // 同步颜色选择器
+            errorTip.textContent = '';
         } else {
             errorTip.textContent = '格式错误！请输入有效的16进制或RGB颜色';
         }
     }
 
-    // 颜色选择器变化时同步更新
+    // --------------- 新增：图片替换核心逻辑 ---------------
+    // 6.1 输入URL换图
+    function handleUrlReplace() {
+        const url = imageUrlInput.value.trim();
+        if (!url) {
+            imageErrorTip.textContent = '请输入图片URL';
+            return;
+        }
+        // 验证URL格式（简单校验）
+        const urlReg = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-./?%&=]*)?$/;
+        if (!urlReg.test(url)) {
+            imageErrorTip.textContent = 'URL格式无效（如https://xxx.png）';
+            return;
+        }
+        // 测试图片是否能加载（避免无效URL）
+        const testImg = new Image();
+        testImg.onload = () => {
+            imageUrl = url; // 更新全局图片路径
+            icon.src = imageUrl; // JS重新赋值路径（原需求：用imageUrl刷新icon）
+            imageErrorTip.textContent = '';
+            applyColor(colors[0]); // 换图后重置为默认颜色
+        };
+        testImg.onerror = () => {
+            imageErrorTip.textContent = 'URL图片加载失败，请检查链接';
+        };
+        testImg.src = url;
+    }
+
+    // 6.2 选择本地文件换图
+    function handleFileReplace(file) {
+        if (!file) return;
+        // 验证文件格式
+        const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
+        if (!validTypes.includes(file.type)) {
+            imageErrorTip.textContent = '仅支持 PNG/JPG/JPEG 格式';
+            return;
+        }
+        // 生成文件临时URL
+        const fileUrl = URL.createObjectURL(file);
+        imageUrl = fileUrl; // 更新全局图片路径
+        icon.src = imageUrl; // JS重新赋值路径（原需求）
+        imageErrorTip.textContent = '';
+        applyColor(colors[0]); // 换图后重置为默认颜色
+    }
+
+    // --------------- 事件绑定（新增图片相关事件） ---------------
+    // 颜色相关事件（原逻辑）
     colorPicker.addEventListener('input', function() {
-        const color = this.value;
-        applyColor(color);
-        colorInput.value = color.toUpperCase();
+        applyColor(this.value);
+        colorInput.value = this.value.toUpperCase();
         errorTip.textContent = '';
     });
-
-    // 绑定事件
     applyCustomBtn.addEventListener('click', handleCustomColor);
     colorInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') handleCustomColor(); // 支持回车应用
+        if (e.key === 'Enter') handleCustomColor();
     });
 
-    // 初始化默认颜色
+    // 图片相关事件（新增）
+    applyUrlBtn.addEventListener('click', handleUrlReplace);
+    imageUrlInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleUrlReplace();
+    });
+    fileInput.addEventListener('change', (e) => {
+        handleFileReplace(e.target.files[0]);
+    });
+
+    // --------------- 初始化（新增：用imageUrl刷新icon路径） ---------------
+    icon.src = imageUrl; // JS重新赋值初始路径（原需求）
     applyColor(colors[0]);
 </script>
 </body>
