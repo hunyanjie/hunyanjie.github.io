@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片文字小组件 - 改进版</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #e6e6e6;
+      min-height: 100vh;
+    }
+
+    .demo-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-panel {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .control-panel h3 {
+      margin-top: 0;
+      color: #ffffff;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 10px;
+    }
+
+    .control-group {
+      margin-bottom: 15px;
+    }
+
+    .control-group label {
+      display: inline-block;
+      width: 120px;
+      font-weight: 500;
+      color: #cccccc;
+    }
+
+    .control-group input[type="text"],
+    .control-group input[type="color"],
+    .control-group input[type="range"] {
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .control-group input[type="text"]:focus,
+    .control-group input[type="color"]:focus,
+    .control-group input[type="range"]:focus {
+      outline: none;
+      border-color: rgba(100, 150, 255, 0.5);
+      box-shadow: 0 0 0 2px rgba(100, 150, 255, 0.2);
+    }
+
+    .control-group input[type="range"] {
+      width: 200px;
+      vertical-align: middle;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+
+    .range-value {
+      display: inline-block;
+      width: 40px;
+      text-align: center;
+      font-weight: 500;
+      margin-left: 10px;
+      color: #ffffff;
+    }
+
+    .content-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .content-section h4 {
+      margin-top: 0;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .content-section p {
+      color: #cccccc;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div class="demo-container">
+  <h2>图片文字小组件</h2>
+
+  <div class="control-panel">
+    <h3>参数控制面板</h3>
+    <div class="control-group">
+      <label>背景图片路径：</label>
+      <input type="text" id="imagePath" value="files\金.png" style="width: 400px;">
+    </div>
+    <div class="control-group">
+      <label>文字内容：</label>
+      <input type="text" id="textContent" value="示例文字" style="width: 200px;">
+    </div>
+    <div class="control-group">
+      <label>文字颜色：</label>
+      <input type="color" id="textColor" value="#FFFFFF">
+    </div>
+    <div class="control-group">
+      <label>文字阴影厚度：</label>
+      <input type="range" id="shadowSize" min="0" max="10" value="3">
+      <span class="range-value" id="shadowValue">3</span>
+    </div>
+    <div class="control-group">
+      <label>显示大小：</label>
+      <input type="range" id="displaySize" min="50" max="300" value="100">
+      <span class="range-value" id="sizeValue">100</span>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <h4>段落内容示例</h4>
+    <p>这是一个示例段落，展示如何在段落中嵌入图片文字小组件。小组件会根据您的设置自动调整大小和样式，文字高度占图片高度的60%，并确保左右留5%空间。</p>
+
+    <!-- 嵌入的图片文字小组件 -->
+    <div id="imageTextWidget"
+         data-image="C:\Users\Admin\Desktop\金.png"
+         data-text="示例文字"
+         data-text-color="#FFFFFF"
+         data-shadow-size="3"
+         data-size="100">
+    </div>
+
+    <p>小组件会自动适应容器大小，文字始终居中显示在图片上，不会出现错位或分离的情况。您可以通过上方的控制面板实时调整参数。</p>
+  </div>
+
+  <div class="content-section">
+    <h4>长文字测试</h4>
+    <p>测试长文字情况下的自适应效果：</p>
+
+    <!-- 长文字测试 -->
+    <div id="imageTextWidget2"
+         data-image="C:\Users\Admin\Desktop\金.png"
+         data-text="这是一个很长的文字测试"
+         data-text-color="#FFFFFF"
+         data-shadow-size="5"
+         data-size="150">
+    </div>
+
+    <p>即使是长文字，组件也会自动调整字体大小以确保文字在一行内显示，并且左右留5%的空间。</p>
+  </div>
+
+  <div class="content-section">
+    <h4>超宽文字测试</h4>
+    <p>测试超宽文字情况下的自适应效果：</p>
+
+    <!-- 超宽文字测试 -->
+    <div id="imageTextWidget3"
+         data-image="C:\Users\Admin\Desktop\金.png"
+         data-text="这是一个超级长的文字测试，用于验证组件的宽度自适应能力"
+         data-text-color="#FFFFFF"
+         data-shadow-size="4"
+         data-size="200">
+    </div>
+
+    <p>即使是超宽文字，组件也会自动调整字体大小以确保文字在一行内显示，并且左右留5%的空间。</p>
+  </div>
+</div>
+
+<script>
+  // 图片文字小组件类 - 改进版
+  class ImageTextWidget {
+    constructor(container) {
+      this.container = container;
+      this.image = new Image();
+      this.init();
+    }
+
+    init() {
+      this.container.innerHTML = `
+      <div class="itw-wrapper">
+        <div class="itw-image-container">
+          <img class="itw-image" alt="">
+          <div class="itw-text-overlay"></div>
+        </div>
+      </div>`;
+
+      this.wrapper   = this.container.querySelector('.itw-wrapper');
+      this.imageEl   = this.container.querySelector('.itw-image');
+      this.textOverlay = this.container.querySelector('.itw-text-overlay');
+
+      this.image.onload = () => this.updateFontSize();
+      this.initStyles();
+      this.updateFromData();
+    }
+
+    initStyles() {
+      const uid = 'itw-' + Math.random().toString(36).slice(2, 12);
+      this.container.classList.add(uid);
+      if (!document.getElementById('style-' + uid)) {
+        const s = document.createElement('style');
+        s.id = 'style-' + uid;
+        s.textContent = `
+        .${uid}{display:inline-block;vertical-align:middle;line-height:0}
+        .${uid} .itw-wrapper{display:inline-block;position:relative;max-width:100%}
+        .${uid} .itw-image-container{position:relative;display:inline-block;max-width:100%}
+        .${uid} .itw-image{display:block;max-width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
+        .${uid} .itw-text-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 5%;box-sizing:border-box;pointer-events:none;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;text-shadow:0 0 10px rgba(0,0,0,.8);border-radius:8px}`;
+        document.head.appendChild(s);
+      }
+    }
+
+    updateFromData() {
+      const d = this.container.dataset;
+      this.setImage(d.image || '');
+      this.setText(d.text || '');
+      this.setTextColor(d.textColor || '#fff');
+      this.setShadowSize(parseInt(d.shadowSize) || 3);
+      this.setDisplaySize(parseInt(d.size) || 100);
+    }
+
+    setImage(src) {
+      if (src && src !== this.image.src) {
+        this.image.src = src;
+        this.imageEl.src = src;
+      }
+    }
+    setText(t) {
+      this.textOverlay.textContent = t;
+      this.updateFontSize();
+    }
+    setTextColor(c) { this.textOverlay.style.color = c; }
+    setShadowSize(s) {
+      this.textOverlay.style.textShadow = `0 0 ${s}px rgba(0,0,0,.8),
+                                         0 0 ${s*2}px rgba(0,0,0,.6),
+                                         0 0 ${s*3}px rgba(0,0,0,.4)`;
+    }
+    setDisplaySize(sz) {
+      this.wrapper.style.width = sz + 'px';
+      // 让浏览器先完成布局再计算字体
+      requestAnimationFrame(() => this.updateFontSize());
+    }
+
+    // 核心：严格限制在左右 5 %、高度 80 %
+    updateFontSize() {
+      const w = this.wrapper.offsetWidth,
+              h = this.imageEl.offsetHeight;
+      if (!w || !h) return;
+
+      // 可用宽度、高度
+      const maxW = w * 0.90,                    // 左右留 5 %
+              maxH = h * 0.60;                    // 高度 60 %
+
+      // 临时测量元素
+      const tmp = document.createElement('span');
+      tmp.style.cssText = `position:fixed;top:-9999px;left:-9999px;visibility:hidden;
+                         white-space:nowrap;font-weight:bold;line-height:1`;
+      tmp.textContent = this.textOverlay.textContent;
+      document.body.appendChild(tmp);
+
+      // 二分法找最大字号
+      let min = 1, max = Math.floor(maxH * 2), best = 1;
+      while (min <= max) {
+        const mid = Math.floor((min + max) / 2);
+        tmp.style.fontSize = mid + 'px';
+        if (tmp.offsetWidth <= maxW && tmp.offsetHeight <= maxH) {
+          best = mid;
+          min  = mid + 1;
+        } else {
+          max  = mid - 1;
+        }
+      }
+      document.body.removeChild(tmp);
+
+      this.textOverlay.style.fontSize = best + 'px';
+    }
+  }
+
+  // 初始化所有小组件
+  function initWidgets() {
+    const widgets = document.querySelectorAll('[id^="imageTextWidget"]');
+    widgets.forEach(container => {
+      if (!container.widget) {
+        container.widget = new ImageTextWidget(container);
+      }
+    });
+  }
+
+  // 页面加载完成后初始化
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[id^="imageTextWidget"]').forEach(el => {
+      if (!el.widget) el.widget = new ImageTextWidget(el);
+    });
+  });
+  // 窗口响应
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('[id^="imageTextWidget"]').forEach(el => {
+      if (el.widget) el.widget.updateFontSize();
+    });
+  });
+
+  // 控制面板功能
+  document.addEventListener('DOMContentLoaded', function() {
+    const widget1 = document.getElementById('imageTextWidget');
+
+    // 图片路径
+    document.getElementById('imagePath').addEventListener('input', function(e) {
+      widget1.dataset.image = e.target.value;
+      if (widget1.widget) {
+        widget1.widget.setImage(e.target.value);
+      }
+    });
+
+    // 文字内容
+    document.getElementById('textContent').addEventListener('input', function(e) {
+      widget1.dataset.text = e.target.value;
+      if (widget1.widget) {
+        widget1.widget.setText(e.target.value);
+      }
+    });
+
+    // 文字颜色
+    document.getElementById('textColor').addEventListener('input', function(e) {
+      widget1.dataset.textColor = e.target.value;
+      if (widget1.widget) {
+        widget1.widget.setTextColor(e.target.value);
+      }
+    });
+
+    // 阴影大小
+    document.getElementById('shadowSize').addEventListener('input', function(e) {
+      const value = parseInt(e.target.value);
+      widget1.dataset.shadowSize = value;
+      document.getElementById('shadowValue').textContent = value;
+      if (widget1.widget) {
+        widget1.widget.setShadowSize(value);
+      }
+    });
+
+    // 显示大小
+    document.getElementById('displaySize').addEventListener('input', function(e) {
+      const value = parseInt(e.target.value);
+      widget1.dataset.size = value;
+      document.getElementById('sizeValue').textContent = value;
+      if (widget1.widget) {
+        widget1.widget.setDisplaySize(value);
+      }
+    });
+  });
+</script>
+</body>
+</html>
